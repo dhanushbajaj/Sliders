@@ -2,10 +2,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>cst8218.baja0012</groupId>
-    <artifactId>slider-dhanush</artifactId>
+    <artifactId>AppUser</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <name>slider-dhanush-1.0-SNAPSHOT</name>
+    <packaging>war</packaging>
+    <name>AppUser-1.0-SNAPSHOT</name>
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -18,12 +18,6 @@
             <artifactId>jakarta.jakartaee-api</artifactId>
             <version>${jakartaee}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.2</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
     
@@ -45,7 +39,4 @@
             </plugin>
         </plugins>
     </build>
-    <modules>
-        <module>cst8218.baja0012_AppUser_war_1.0-SNAPSHOT</module>
-    </modules>
 </project>

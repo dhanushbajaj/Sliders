@@ -2,11 +2,25 @@ package cst8218.baja0012.slider;
 
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.security.enterprise.authentication.mechanism.http.BasicAuthenticationMechanismDefinition;
+import jakarta.security.enterprise.identitystore.DatabaseIdentityStoreDefinition;
+import jakarta.security.enterprise.identitystore.PasswordHash;
 
 /**
  * Configures Jakarta RESTful Web Services for the application.
  * @author Juneau
  */
+@ApplicationScoped
+
+@BasicAuthenticationMechanismDefinition
+@DatabaseIdentityStoreDefinition(
+    dataSourceLookup = "${'java:comp/DefaultDataSource'}",
+    callerQuery = "SELECT password FROM appuser WHERE userid = ?",
+    groupsQuery = "SELECT groupname FROM appuser WHERE userid = ?",
+    hashAlgorithm = PasswordHash.class,
+    priority = 10
+)
 @ApplicationPath("resources")
 public class JakartaRestConfiguration extends Application {
     
