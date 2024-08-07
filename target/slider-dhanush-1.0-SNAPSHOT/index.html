@@ -1,10 +1,123 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Start Page</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    </head>
-    <body>
-        <h1>Hello World!</h1>
-    </body>
+<head>
+    <meta charset="UTF-8" />
+    <title>Slider Control</title>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script async src="https://ga.jspm.io/npm:es-module-shims@1.7.0/dist/es-module-shims.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "react": "https://esm.sh/react?dev",
+                "react-dom/client": "https://esm.sh/react-dom/client?dev"
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel" data-type="module">
+        import React, { useEffect, useState, useRef } from 'react';
+        import { createRoot } from 'react-dom/client';
+
+        function MyApp() {
+            const [sliders, setSliders] = useState([]);
+            const [selectedSlider, setSelectedSlider] = useState(null);
+
+            useEffect(() => {
+                async function fetchSliders() {
+                    const response = await fetch("http://localhost:8080/slider-dhanush/resources/sliders", {
+                        headers: { 'Accept': 'application/xml' }
+                    });
+                    const textData = await response.text();
+                    const parser = new DOMParser();
+                    const xml = parser.parseFromString(textData, "application/xml");
+
+                    const slidersArray = Array.from(xml.getElementsByTagName("slider")).map(slider => ({
+                        id: slider.getElementsByTagName("id")[0].textContent,
+                        x: parseInt(slider.getElementsByTagName("x")[0].textContent),
+                        y: parseInt(slider.getElementsByTagName("y")[0].textContent),
+                        width: parseInt(slider.getElementsByTagName("width")[0].textContent),
+                        height: parseInt(slider.getElementsByTagName("height")[0].textContent),
+                        color: slider.getElementsByTagName("color")[0].textContent
+                    }));
+
+                    setSliders(slidersArray);
+                }
+
+                fetchSliders();
+                const interval = setInterval(fetchSliders, 3000);
+                return () => clearInterval(interval);
+            }, []);
+
+            const canvasRef = useRef(null);
+
+            useEffect(() => {
+                const canvas = canvasRef.current;
+                const ctx = canvas.getContext("2d");
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                sliders.forEach(slider => {
+                    ctx.fillStyle = slider.color;
+                    ctx.fillRect(slider.x, slider.y, slider.width, slider.height);
+                });
+            }, [sliders]);
+
+            const handleSliderClick = (slider) => {
+                setSelectedSlider(slider);
+            };
+
+            const handleSliderChange = (event, attribute) => {
+                setSelectedSlider({
+                    ...selectedSlider,
+                    [attribute]: parseInt(event.target.value)
+                });
+            };
+
+            const handleUpdate = async () => {
+                const updatedSliderXML = `
+                    <slider>
+                        <id>${selectedSlider.id}</id>
+                        <x>${selectedSlider.x}</x>
+                        <y>${selectedSlider.y}</y>
+                        <width>${selectedSlider.width}</width>
+                        <height>${selectedSlider.height}</height>
+                        <color>${selectedSlider.color}</color>
+                    </slider>
+                `;
+                await fetch(`http://localhost:8080/slider-dhanush/resources/sliders/${selectedSlider.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/xml' },
+                    body: updatedSliderXML
+                });
+                setSelectedSlider(null);
+            };
+
+            return (
+                <div>
+                    {selectedSlider && (
+                        <div>
+                            <input
+                                type="number"
+                                value={selectedSlider.width}
+                                onChange={(e) => handleSliderChange(e, 'width')}
+                            />
+                            <input
+                                type="number"
+                                value={selectedSlider.height}
+                                onChange={(e) => handleSliderChange(e, 'height')}
+                            />
+                            <button onClick={handleUpdate}>Update Slider</button>
+                        </div>
+                    )}
+                    <canvas ref={canvasRef} width={800} height={600} onClick={() => setSelectedSlider(null)} />
+                </div>
+            );
+        }
+
+        const container = document.getElementById('root');
+        const root = createRoot(container);
+        root.render(<MyApp />);
+    </script>
+</body>
 </html>
