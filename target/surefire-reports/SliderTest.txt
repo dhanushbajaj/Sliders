@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: SliderTest
 -------------------------------------------------------------------------------
-Tests run: 3, Failures: 3, Errors: 0, Skipped: 0, Time elapsed: 0.050 s <<< FAILURE! -- in SliderTest
-SliderTest.testDirectionChangeCount -- Time elapsed: 0.025 s <<< FAILURE!
+Tests run: 6, Failures: 3, Errors: 0, Skipped: 0, Time elapsed: 0.055 s <<< FAILURE! -- in SliderTest
+SliderTest.testDirectionChangeCount -- Time elapsed: 0.002 s <<< FAILURE!
 org.opentest4j.AssertionFailedError: expected: <0> but was: <10>
 	at org.junit.jupiter.api.AssertionUtils.fail(AssertionUtils.java:55)
 	at org.junit.jupiter.api.AssertionUtils.failNotEqual(AssertionUtils.java:62)
